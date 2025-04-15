@@ -122,5 +122,4 @@ dmypy.json
 
 # Jupyter Notebook
 *.ipynb
-/.ipynb_checkpoints
-/examples
+examples/
