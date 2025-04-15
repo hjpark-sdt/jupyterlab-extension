@@ -27,19 +27,8 @@ export function runHooker(
       args.id === 'notebook:run-cell-and-select-next'
     ) {
       console.log('🚀 셀 실행 감지됨');
-
       const notebook = notebookTracker.currentWidget;
-      const notebookName = notebook?.context.path;
-      const activeCell = notebook?.content.activeCell;
-      const activeCellIndex = notebook?.content.activeCellIndex;
       const sessionContext = notebook?.sessionContext;
-      const sessionId = sessionContext?.session?.id;
-      const kernelId = sessionContext?.session?.kernel?.id;
-      const kernelName = sessionContext?.session?.kernel?.name;
-      const kernelUserName = sessionContext?.session?.kernel?.username;
-      if (!activeCell) {
-        console.warn('⚠️ 실행된 셀이 없습니다.');
-      }
 
       if (sessionContext) {
         let executionResults: IExecutionResult[] = [];
@@ -56,19 +45,18 @@ export function runHooker(
             // console.log('📜 실행 코드:', msg.content.code);
             const requestPayload: IExecutionRequest = {
               createdAt: new Date().toISOString(),
-              sessionId: sessionId || '',
-              userName: kernelUserName || '',
-              kernelId: kernelId || '',
-              kernelName: kernelName || '',
-              notebookName: notebookName || '',
-              notebookCellIndex: activeCellIndex || -1,
+              sessionId: sessionContext?.session?.id || '',
+              userName: sessionContext?.session?.kernel?.username || '',
+              kernelId: sessionContext?.session?.kernel?.id || '',
+              kernelName: sessionContext?.session?.kernel?.name || '',
+              notebookName: notebook?.context.path || '',
+              notebookCellIndex: notebook?.content.activeCellIndex || -1,
               executionId: msg.parent_header.msg_id,
               executionCode: msg.content.code
             }
             console.log('📜 requestPayload:', requestPayload);
             send('request', requestPayload);
           } else if (KernelMessage.isExecuteResultMsg(msg)) {
-            msg.content.data
             console.log('✅ 실행 결과:', msg.content);
             executionResults.push({
               type: msg.header.msg_type, 
