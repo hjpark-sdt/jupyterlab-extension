@@ -6,7 +6,7 @@ import {
   INotebookTracker 
 } from '@jupyterlab/notebook';
 import {
-  runHooker
+  hookCellExecution
 } from './hooker';
 
 /**
@@ -26,7 +26,7 @@ function activate(
 ): void {
   console.log('JupyterLab extension sdt-qubepad-extension is activated!');
   alert('activate() 실행됨!!!!!!!');
-  runHooker(app, notebookTracker);
+  hookCellExecution(app, notebookTracker);
 }
 
 export default plugin;
